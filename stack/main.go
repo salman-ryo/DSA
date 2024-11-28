@@ -1,18 +1,22 @@
 package main
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
-type Stack struct {
+// ARRAY
+type AStack struct {
 	elements []int
 }
 
 // define push method
-func (s *Stack) Push(value int) {
+func (s *AStack) Push(value int) {
 	s.elements = append(s.elements, value)
 }
 
 // pop method
-func (s *Stack) Pop() int {
+func (s *AStack) Pop() int {
 	if len(s.elements) == 0 {
 		return -1
 	}
@@ -22,9 +26,9 @@ func (s *Stack) Pop() int {
 }
 
 // print method
-func (s *Stack) Print() {
+func (s *AStack) Print() {
 	if len(s.elements) == 0 {
-		fmt.Print("Stack empty")
+		fmt.Print("AStack empty")
 	}
 
 	for i := 0; i < len(s.elements); i++ {
@@ -33,13 +37,43 @@ func (s *Stack) Print() {
 	}
 }
 
+//------------------------------------------------------------------------------------------------------------------------------------------------
+
+// LINKED LIST
+
+type Node struct {
+	data int
+	next *Node
+}
+
+// its just a linked list with pop and push method
+type LStack struct {
+	head *Node
+}
+
+func (ls *LStack) Push(value int) {
+	newNode := &Node{data: value}
+	newNode.next = ls.head
+	ls.head = newNode
+}
+
+func (ls *LStack) Pop() (int, error) {
+	if ls.head == nil {
+		return 0, errors.New("stack is empty")
+	} else {
+		current := ls.head
+		ls.head = current.next
+		return current.data, nil
+	}
+}
+
 func main() {
-	myStack := &Stack{elements: []int{1, 2}}
-	myStack.Push(3)
-	myStack.Push(4)
+	myAStack := &AStack{elements: []int{1, 2}}
+	myAStack.Push(3)
+	myAStack.Push(4)
 	fmt.Println("Before pop:")
-	myStack.Print()
-	myStack.Pop()
+	myAStack.Print()
+	myAStack.Pop()
 	fmt.Println("After pop:")
-	myStack.Print()
+	myAStack.Print()
 }

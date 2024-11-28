@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type Node struct {
 	data int
@@ -43,15 +46,16 @@ func (ll *LinkedList) Remove() error {
 	return nil
 }
 
-//remove last
-func (ll *LinkedList) Pop() error {
+// remove last
+func (ll *LinkedList) Pop() (int, error) {
 	if ll.head == nil {
-		return fmt.Errorf("LL Already mt")
+		return 0, errors.New("LL Already mt")
 	}
 	// if only element, remove it
 	if ll.head.next == nil {
+		lastItem := ll.head
 		ll.head = nil
-		return nil
+		return lastItem.data, nil
 	}
 
 	// traverse to last sec element
@@ -60,8 +64,9 @@ func (ll *LinkedList) Pop() error {
 		current = current.next
 	}
 	// cut off last ele
+	finalNode := current.next
 	current.next = nil
-	return nil
+	return finalNode.data, nil
 }
 
 // remove between
@@ -104,7 +109,15 @@ func main() {
 	myLL.Add(4)
 	myLL.Add(5)
 	myLL.Add(6)
+	myLL.Add(7)
 	fmt.Println("Ll: ")
+	// myLL.Print()
+	// myLL.Delete(4)
+	testPop, err := myLL.Pop()
+	if err != nil {
+		fmt.Println(err)
+	}
 	myLL.Print()
+	fmt.Println("Popped item: ", testPop)
 
 }

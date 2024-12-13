@@ -1,65 +1,48 @@
 package main
 
-import "errors"
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+)
 
-type SQueue struct {
-	elements []int
+type TNode struct {
+	Value int    `json:"value"` // JSON field name
+	Left  *TNode `json:"left"`  // Recursive serialization
+	Right *TNode `json:"right"`
 }
 
-func (sq *SQueue) Enqueue(value int) {
-	sq.elements = append(sq.elements, value)
-}
-
-func (sq *SQueue) Dequeue() (int, error) {
-	if len(sq.elements) == 0 {
-		return 0, errors.New("queue is empty")
+func (tn *TNode) Insert(value int) error {
+	if tn == nil {
+		return errors.New("root node not initialized")
 	}
-	headValue := sq.elements[0]
-	sq.elements = sq.elements[1:]
-	return headValue, nil
-}
-
-func (sq *SQueue) Peek() (int, error) {
-	if len(sq.elements) == 0 {
-		return 0, errors.New("queue is empty")
-	}
-	return sq.elements[0], nil
-}
-
-type Node struct {
-	value int
-	next  *Node
-}
-
-type LLQueue struct {
-	head *Node
-	tail *Node
-}
-
-func (llq *LLQueue) Enqueu(value int) {
-	newNode := &Node{value: value}
-	// if empty
-	if llq.tail == nil {
-		llq.head = newNode
-		llq.tail = newNode
+	if value < tn.Value {
+		if tn.Left == nil {
+			tn.Left = &TNode{Value: value}
+		} else {
+			return tn.Left.Insert(value)
+		}
 	} else {
-		// add value to tail
-		llq.tail.next = newNode
-		// update tail to next value
-		llq.tail = llq.tail.next
+		if tn.Right == nil {
+			tn.Right = &TNode{Value: value}
+		} else {
+			return tn.Right.Insert(value)
+		}
 	}
+	return nil
 }
 
-func (llq *LLQueue) Dequeue() (int, error) {
-	if llq.head == nil {
-		return 0, errors.New("list queue is emtpy")
+func main() {
+	rootNode := &TNode{Value: 2}
+	rootNode.Insert(1)
+	rootNode.Insert(3)
+
+	// Convert tree to JSON
+	jsonRoot, err := json.MarshalIndent(rootNode, "", "  ")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
 	}
 
-	headValue := llq.head.value
-	llq.head = llq.head.next
-	// if q becomes emtpy, set tail to nil too so it doesnt point to old node
-	if llq.head == nil {
-		llq.tail = nil
-	}
-	return headValue, nil
+	fmt.Println(string(jsonRoot))
 }

@@ -5,25 +5,25 @@ import (
 	"fmt"
 )
 
-type TNode struct {
+type BTNode struct {
 	Value int
-	Left  *TNode
-	Right *TNode
+	Left  *BTNode
+	Right *BTNode
 }
 
-func (tn *TNode) Insert(value int) error {
+func (tn *BTNode) Insert(value int) error {
 	if tn == nil {
 		return errors.New("root node not initialized")
 	}
 	if value < tn.Value {
 		if tn.Left == nil {
-			tn.Left = &TNode{Value: value}
+			tn.Left = &BTNode{Value: value}
 		} else {
 			return tn.Left.Insert(value)
 		}
 	} else {
 		if tn.Right == nil {
-			tn.Right = &TNode{Value: value}
+			tn.Right = &BTNode{Value: value}
 		} else {
 			return tn.Right.Insert(value)
 		}
@@ -32,7 +32,7 @@ func (tn *TNode) Insert(value int) error {
 }
 
 // root,left,right
-func (tn *TNode) PreOrderTraversal(prefix string) {
+func (tn *BTNode) PreOrderTraversal(prefix string) {
 	if tn == nil {
 		return
 	}
@@ -53,7 +53,7 @@ func (tn *TNode) PreOrderTraversal(prefix string) {
 }
 
 // left,root,right
-func (tn *TNode) InOrderTraversal(prefix string) {
+func (tn *BTNode) InOrderTraversal(prefix string) {
 	if tn == nil {
 		return
 	}
@@ -77,7 +77,7 @@ func (tn *TNode) InOrderTraversal(prefix string) {
 }
 
 // left,right,root
-func (tn *TNode) PostOrderTraversal(prefix string) {
+func (tn *BTNode) PostOrderTraversal(prefix string) {
 	if tn == nil {
 		return
 	}
@@ -100,16 +100,37 @@ func (tn *TNode) PostOrderTraversal(prefix string) {
 	fmt.Println(prefix + fmt.Sprintf("%d", tn.Value))
 }
 
+// Search if a value exists
+func (btn *BTNode) Search(value int) bool {
+	// if end of node, return false
+	if btn == nil {
+		return false
+	}
+	// if value matches current node, return true
+	if value == btn.Value {
+		return true
+	}
+
+	// if less, search in left node
+	if value < btn.Value {
+		return btn.Left.Search(value) //return the result from Search
+	} else {
+		return btn.Right.Search(value) //return the result from Search
+	}
+}
+
 func main() {
-	rootNode := &TNode{Value: 2}
-	rootNode.Insert(1)
-	rootNode.Insert(1)
-	rootNode.Insert(0)
-	rootNode.Insert(3)
-	rootNode.Insert(3)
-	rootNode.Insert(4)
+	rooBTNode := &BTNode{Value: 3}
+	rooBTNode.Insert(1)
+	rooBTNode.Insert(2)
+	rooBTNode.Insert(5)
+	rooBTNode.Insert(4)
 
 	// Display the tree in a readable structure
 	fmt.Println("Tree structure:")
-	rootNode.PostOrderTraversal("\t")
+	rooBTNode.PreOrderTraversal("\t")
+
+	exists := rooBTNode.Search(4)
+	fmt.Println(exists)
+
 }

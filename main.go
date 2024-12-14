@@ -1,48 +1,71 @@
 package main
 
-import (
-	"encoding/json"
-	"errors"
-	"fmt"
-)
+import "fmt"
 
 type TNode struct {
-	Value int    `json:"value"` // JSON field name
-	Left  *TNode `json:"left"`  // Recursive serialization
-	Right *TNode `json:"right"`
+	Value int
+	Left  *TNode
+	Right *TNode
 }
 
-func (tn *TNode) Insert(value int) error {
+func (tn *TNode) Insert(value int) {
 	if tn == nil {
-		return errors.New("root node not initialized")
+		return
 	}
 	if value < tn.Value {
 		if tn.Left == nil {
 			tn.Left = &TNode{Value: value}
 		} else {
-			return tn.Left.Insert(value)
+			tn.Left.Insert(value)
 		}
 	} else {
 		if tn.Right == nil {
 			tn.Right = &TNode{Value: value}
 		} else {
-			return tn.Right.Insert(value)
+			tn.Right.Insert(value)
 		}
 	}
-	return nil
+}
+
+//root, left, right
+func (tn *TNode) PreOrderTraversal() {
+	if tn == nil {
+		return
+	}
+	fmt.Println(tn.Value, " ")
+	tn.Left.PreOrderTraversal()
+	tn.Right.PreOrderTraversal()
+}
+
+//left,root, right
+func (tn *TNode) InOrderTraversal() {
+	if tn == nil {
+		return
+	}
+	tn.Left.InOrderTraversal()
+	fmt.Println(tn.Value, " ")
+	tn.Right.InOrderTraversal()
+}
+
+//left, right, root
+func (tn *TNode) PostOrderTraversal() {
+	if tn == nil {
+		return
+	}
+	tn.Left.PostOrderTraversal()
+	tn.Right.PostOrderTraversal()
+	fmt.Println(tn.Value, " ")
 }
 
 func main() {
-	rootNode := &TNode{Value: 2}
+	rootNode := &TNode{Value: 3}
 	rootNode.Insert(1)
-	rootNode.Insert(3)
-
-	// Convert tree to JSON
-	jsonRoot, err := json.MarshalIndent(rootNode, "", "  ")
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
-
-	fmt.Println(string(jsonRoot))
+	rootNode.Insert(2)
+	rootNode.Insert(4)
+	rootNode.Insert(5)
+	rootNode.PreOrderTraversal()
+	fmt.Println("===========================")
+	rootNode.InOrderTraversal()
+	fmt.Println("===========================")
+	rootNode.PostOrderTraversal()
 }
